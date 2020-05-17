@@ -5,21 +5,16 @@ import http from "./httpService";
 const apiEndPoint = "/login";
 const tokenKey = "token";
 
-http.setJwt(getJwtWithPrefix());
-
-export async function getJwtWithPrefix() {
-  try {
-    const jwt = await SecureStore.getItemAsync(tokenKey);
-    return `Bearer ${jwt}`;
-  } catch (error) {
-    return null;
-  }
-}
+// http.setJwt(getJwt());
 
 export const login = async (username, password) => {
-  const { data: jwt } = await http.post(apiEndPoint, { username, password });
-  //   SecureStore.setItemAsync(tokenKey, jwt);
-  console.log(jwt);
+  const response = await http.post(apiEndPoint, { username, password });
+
+  await SecureStore.setItemAsync(tokenKey, `Bearer ${response.data.token}`);
+
+  http.setJwt(`Bearer ${response.data.token}`);
+
+  return response;
 };
 
 export const loginWithJwt = (jwt) => {
@@ -34,8 +29,8 @@ export async function getJwt() {
   }
 }
 
-export const logout = () => {
-  SecureStore.deleteItemAsync(tokenKey);
+export const logout = async () => {
+  return await SecureStore.deleteItemAsync(tokenKey);
 };
 
 export const getCurrentUser = async () => {

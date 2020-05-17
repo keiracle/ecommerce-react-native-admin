@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components/native";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { Button, Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { KeyboardAvoidingView } from "react-native";
-import { login } from "../../services/authService";
+import { UserContext } from "../../context/userProvider";
+import { useNavigation } from "@react-navigation/native";
 
 const LoginForm = (props) => {
   const { ...rest } = props;
+
+  const { onLogin } = useContext(UserContext);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const initialValues = { username: "", password: "" };
 
@@ -23,12 +28,29 @@ const LoginForm = (props) => {
       .required("Password is required"),
   });
 
+  const { navigate } = useNavigation();
+
   const handleSubmit = async (values) => {
     const { username, password } = values;
-    try {
-      await login(username, password);
-    } catch (error) {
-      console.log(error);
+    setIsLoading(true);
+    const response = await onLogin(username, password);
+    setIsLoading(false);
+
+    if (response && response.status === 200) {
+      // Redirect
+      navigate("AdminTemplate");
+    }
+  };
+
+  const handleFakeSubmit = async (values) => {
+    const { username, password } = values;
+    setIsLoading(true);
+    const response = await onLogin(username, password);
+    setIsLoading(false);
+
+    if (response && response.status === 200) {
+      // Redirect
+      // navigate("AdminTemplate");
     }
   };
 
@@ -92,7 +114,26 @@ const LoginForm = (props) => {
                   marginHorizontal: 30,
                 }}
                 raised
+                loading={isLoading}
+                disabled={isLoading}
                 onPress={handleSubmit}
+              />
+              <Button
+                title="Sign In With Admin"
+                buttonStyle={{
+                  backgroundColor: "rgb(244, 68, 68 )",
+                }}
+                titleStyle={{ color: "black" }}
+                containerStyle={{
+                  marginTop: 30,
+                  marginHorizontal: 30,
+                }}
+                raised
+                loading={isLoading}
+                disabled={isLoading}
+                onPress={() => {
+                  handleFakeSubmit({ username: "admin1", password: "123456" });
+                }}
               />
             </SForm>
           </KeyboardAvoidingView>

@@ -1,112 +1,52 @@
 import React, { useState, useEffect } from "react";
+import { getProducts, removeProduct } from "../services/productService";
 
 const ProductsContext = React.createContext();
 
-const ProductsProvider = props => {
+const ProductsProvider = (props) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // async function getProductsFromServer() {
-    //   let { data } = await getProducts();
-    //   console.log("Fetch products from server");
-    //   setProducts(data);
-    // }
+    const getProductsFromServer = async () => {
+      try {
+        let { data } = await getProducts();
+        setProducts(data);
+        // console.log(data);
+      } catch (error) {
+        console.log("Products : ", error);
+      }
+    };
 
-    // getProductsFromServer();
-    setProducts(fakeProducts);
+    getProductsFromServer();
   }, []);
 
-  const findProductById = id => {
-    return products.find(product => product.id === id);
+  const findProductById = (id) => {
+    return products.find((product) => product.id === id);
+  };
+
+  // Optimisstic update
+  const handleRemoveProduct = async (id) => {
+    const prevState = [...products];
+    let tempProducts = [...products];
+    tempProducts = tempProducts.filter((product) => product.productId !== id);
+
+    setProducts([...tempProducts]);
+
+    // Call server
+    // const response = await removeProduct();
   };
 
   return (
-    <ProductsContext.Provider value={{ products, findProductById }}>
+    <ProductsContext.Provider
+      value={{
+        products,
+        findProductById,
+        onRemoveProduct: handleRemoveProduct,
+      }}
+    >
       {props.children}
     </ProductsContext.Provider>
   );
 };
 
-const Consumer = ProductsContext.Consumer;
-
 export { ProductsContext, ProductsProvider };
-
-const fakeProducts = [
-  {
-    id: 1,
-    name: "Bike",
-    category: "bike",
-    price: 1000000,
-    promotionPrice: 500000,
-    image: "",
-    descriptions:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, enim!",
-    viewcount: 0
-  },
-  {
-    id: 2,
-    name: "Bike",
-    category: "bike",
-    price: 10000,
-    promotionPrice: 5000,
-    image: "",
-    descriptions:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, enim!",
-    viewcount: 0
-  },
-  {
-    id: 3,
-    name: "Bike",
-    category: "bike",
-    price: 10000,
-    promotionPrice: 5000,
-    image: "",
-    descriptions:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, enim!",
-    viewcount: 0
-  },
-  {
-    id: 4,
-    name: "Bike",
-    category: "bike",
-    price: 10000,
-    promotionPrice: 5000,
-    image: "",
-    descriptions:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, enim!",
-    viewcount: 0
-  },
-  {
-    id: 5,
-    name: "Bike",
-    category: "bike",
-    price: 10000,
-    promotionPrice: 5000,
-    image: "",
-    descriptions:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, enim!",
-    viewcount: 0
-  },
-  {
-    id: 6,
-    name: "Bike",
-    category: "bike",
-    price: 10000,
-    promotionPrice: 5000,
-    image: "",
-    descriptions:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, enim!",
-    viewcount: 0
-  },
-  {
-    id: 7,
-    name: "Bike",
-    category: "bike",
-    price: 10000,
-    promotionPrice: 5000,
-    image: "",
-    descriptions:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, enim!",
-    viewcount: 0
-  }
-];

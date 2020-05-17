@@ -1,8 +1,7 @@
 import Axios from "axios";
-import Config from "react-native-config";
+import { API_URL } from "../env";
 
-Axios.defaults.baseURL = Config.REACT_APP_API_URL;
-console.log(Config.REACT_APP_API_URL);
+Axios.defaults.baseURL = API_URL;
 
 Axios.interceptors.response.use(null, (error) => {
   const expectedError =
