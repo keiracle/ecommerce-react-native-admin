@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Text } from "react-native";
-import styled from "styled-components/native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import "react-native-gesture-handler";
@@ -10,7 +9,7 @@ import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import { Root } from "native-base";
 import { UserContext } from "./context/userProvider";
-import AdminTemplate from "./components/adminTemplate/AdminTemplate";
+import Tabs from "./components/stack/Tabs";
 import InteractiveButton from "./components/navigateBar/InteractiveButton";
 
 const RootStack = createStackNavigator();
@@ -39,7 +38,7 @@ export default function Application(props) {
     <Root>
       <NavigationContainer>
         <RootStack.Navigator mode="modal">
-          {user.token === "" ? (
+          {user.token.length === 0 ? (
             <RootStack.Screen
               name="Authentication"
               component={Authentication}
@@ -54,13 +53,10 @@ export default function Application(props) {
             />
           ) : (
             <RootStack.Screen
-              name="AdminTemplate"
-              component={AdminTemplate}
+              name="Tabs"
+              component={Tabs}
               options={{
-                headerLeft: null,
-                headerLeftContainerStyle: { marginLeft: 15 },
-                headerTitleAlign: "center",
-                headerShown: true,
+                headerTitle: "",
                 headerRight: () => <InteractiveButton />,
               }}
             />

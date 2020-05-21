@@ -1,13 +1,21 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components/native";
 import { ProductsContext } from "../../context/productsProvider";
 import { View } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import ProductCard from "../product/ProductCard";
 import SkeletonProductCard from "../product/SkeletonProductCard";
+import { ActivityIndicator } from "react-native";
 
 const ListProduct = (props) => {
-  const { products, onRemoveProduct } = useContext(ProductsContext);
+  const { products, onRemoveProduct, onPageIncrement } = useContext(
+    ProductsContext
+  );
+
+  const [
+    onEndReachedCalledDuringMomentum,
+    setOnEndReachedCalledDuringMomentum,
+  ] = useState(true);
 
   let skeletons = [];
   for (let index = 0; index < 7; index++) {
@@ -16,10 +24,25 @@ const ListProduct = (props) => {
 
   if (products.length === 0) return <View>{skeletons}</View>;
 
+  const handleLoadMoreData = () => {
+    if (!onEndReachedCalledDuringMomentum) {
+      onPageIncrement();
+      setOnEndReachedCalledDuringMomentum(true);
+    }
+  };
+
+  const renderSearchResultsFooter = () => {
+    return !onEndReachedCalledDuringMomentum ? (
+      <View>
+        <ActivityIndicator size="large" color="#e83628" />
+      </View>
+    ) : null;
+  };
+
   return (
     <SListProduct>
       <SwipeListView
-        keyExtractor={(item) => item.productId}
+        keyExtractor={(item) => item.productId.toString()}
         data={products}
         renderItem={(data) => <ProductCard product={data.item} />}
         renderHiddenItem={(data, rowMap) => (
@@ -46,6 +69,10 @@ const ListProduct = (props) => {
           }, 2000);
         }}
         style={{ marginHorizontal: 10 }}
+        onEndReached={handleLoadMoreData}
+        onEndReachedThreshold={0.01}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        ListFooterComponent={renderSearchResultsFooter}
       />
     </SListProduct>
   );

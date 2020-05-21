@@ -6,6 +6,7 @@ import WrapperDetail from "../detail/WrapperDetail";
 import InteractiveButton from "../navigateBar/InteractiveButton";
 import Tabs from "./Tabs";
 import CartIconWithBadge from "../navigateBar/CartIconWithBadge";
+import { View } from "native-base";
 
 const MainStack = createStackNavigator();
 
@@ -51,14 +52,6 @@ const Main = (props) => {
         name="Tabs"
         component={Tabs}
         options={getHeaderOptions}
-      />
-      <MainStack.Screen
-        name="Detail"
-        component={WrapperDetail}
-        options={{
-          headerTitle: "",
-          headerRight: () => <InteractiveButton />,
-        }}
       />
     </MainStack.Navigator>
   );

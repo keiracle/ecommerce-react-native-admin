@@ -6,7 +6,6 @@ import { Button, Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { KeyboardAvoidingView } from "react-native";
 import { UserContext } from "../../context/userProvider";
-import { useNavigation } from "@react-navigation/native";
 
 const LoginForm = (props) => {
   const { ...rest } = props;
@@ -28,7 +27,7 @@ const LoginForm = (props) => {
       .required("Password is required"),
   });
 
-  const { navigate } = useNavigation();
+  // const { navigate } = useNavigation();
 
   const handleSubmit = async (values) => {
     const { username, password } = values;
@@ -38,7 +37,7 @@ const LoginForm = (props) => {
 
     if (response && response.status === 200) {
       // Redirect
-      navigate("AdminTemplate");
+      // navigate("Main");
     }
   };
 
