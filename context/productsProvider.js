@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getProducts, removeProduct } from "../services/productService";
+import {
+  getProducts,
+  removeProduct,
+  saveProduct,
+} from "../services/productService";
 import _ from "lodash";
 import { useContext } from "react";
 import { UserContext } from "./userProvider";
@@ -46,6 +50,54 @@ const ProductsProvider = (props) => {
     // const response = await removeProduct();
   };
 
+  const handleEditProduct = async (editedProduct) => {
+    const prevState = [...products];
+    let tempProducts = [...products];
+    tempProducts = tempProducts.map((p) => {
+      if (p.productId === editedProduct.productId) return editedProduct;
+      return p;
+    });
+
+    setProducts([...tempProducts]);
+
+    // Call server
+    try {
+      const response = await saveProduct(editedProduct);
+      return response;
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        text: `Something wrong happened! ${error.message}`,
+        buttonText: "Okay",
+      });
+      setProducts([...prevState]);
+    }
+  };
+
+  const handleAddProduct = async (product) => {
+    const prevState = [...products];
+    let tempProducts = [...products];
+
+    const tempProduct = { ...product };
+    tempProduct.productId = products[products.length - 1].productId + 1;
+    tempProducts.push({ ...tempProduct });
+
+    setProducts([...tempProducts]);
+
+    // Call server
+    try {
+      const response = await saveProduct(product);
+      return response;
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        text: `Something wrong happened! ${error.message}`,
+        buttonText: "Okay",
+      });
+      setProducts([...prevState]);
+    }
+  };
+
   const handlePageIncrement = () => {
     setPage(page + 1);
   };
@@ -56,6 +108,8 @@ const ProductsProvider = (props) => {
         products,
         findProductById,
         onRemoveProduct: handleRemoveProduct,
+        onEditProduct: handleEditProduct,
+        onAddProduct: handleAddProduct,
         onPageIncrement: handlePageIncrement,
       }}
     >

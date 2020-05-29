@@ -6,8 +6,10 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import ProductCard from "../product/ProductCard";
 import SkeletonProductCard from "../product/SkeletonProductCard";
 import { ActivityIndicator } from "react-native";
+import { Button, Text } from "native-base";
+import { Overlay } from "react-native-elements";
 
-const ListProduct = (props) => {
+const ListProduct = ({ onEditProduct }) => {
   const { products, onRemoveProduct, onPageIncrement } = useContext(
     ProductsContext
   );
@@ -47,7 +49,7 @@ const ListProduct = (props) => {
         renderItem={(data) => <ProductCard product={data.item} />}
         renderHiddenItem={(data, rowMap) => (
           <SHiddenItem>
-            <SEdit onPress={() => {}}>
+            <SEdit onPress={() => onEditProduct(data.item)}>
               <SText>Edit</SText>
             </SEdit>
             <SRemove
@@ -79,7 +81,7 @@ const ListProduct = (props) => {
 };
 
 const SListProduct = styled.View`
-  height: 100%;
+  height: 95%;
 `;
 
 const SHiddenItem = styled.View`
