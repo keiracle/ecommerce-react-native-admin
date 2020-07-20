@@ -20,7 +20,7 @@
     "firebase": "^7.14.5",
     "formik": "^2.1.4",
     "jwt-decode": "^2.2.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "lottie-react-native": "^3.3.2",
     "native-base": "2.13.8",
     "react": "~16.9.0",
